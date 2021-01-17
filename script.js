@@ -4,6 +4,7 @@ var input = document.getElementById('input');
 var result = document.getElementById('result');
 var inputedValue = '';
 var sum = 0;
+var firstCalculation = true;
 var willAdd = false;
 var willSubtract = false;
 var willMultiply = false;
@@ -17,12 +18,10 @@ numberButtons.forEach(function (numberRow) {
                 inputedValue = '';
                 sum = 0;
                 input.textContent = '0';
+                firstCalculation = true;
                 turnAllOperatorsToFalse();
                 return;
             }
-            // if (willAdd || willSubtract || willMultiply || willDivide) {
-            //     return
-            // }
             inputedValue += number.textContent;
             input.textContent = inputedValue.toString();
         });
@@ -31,23 +30,41 @@ numberButtons.forEach(function (numberRow) {
 //add eventlisteners to operators
 operators.childNodes.forEach(function (operator) {
     operator.addEventListener('click', function () {
-        turnAllOperatorsToFalse();
+        if (firstCalculation) {
+            sum = Number(inputedValue);
+            inputedValue = '';
+            input.textContent = sum.toString();
+            firstCalculation = false;
+            console.log(sum, 'this was the first calc');
+            if (operator.textContent === '+') {
+                willAdd = true;
+            }
+            else if (operator.textContent === '-') {
+                willSubtract = true;
+            }
+            else if (operator.textContent === '×') {
+                willMultiply = true;
+            }
+            else if (operator.textContent === '÷') {
+                willDivide = true;
+            }
+            turnAllOperatorsToFalse();
+            return;
+        }
+        calculateSum();
         if (operator.textContent === '+') {
-            calculateSum();
             willAdd = true;
         }
         else if (operator.textContent === '-') {
-            calculateSum();
             willSubtract = true;
         }
         else if (operator.textContent === '×') {
-            calculateSum();
             willMultiply = true;
         }
         else if (operator.textContent === '÷') {
-            calculateSum();
             willDivide = true;
         }
+        turnAllOperatorsToFalse();
     });
 });
 result.addEventListener('click', function () {
@@ -68,6 +85,7 @@ result.addEventListener('click', function () {
         input.textContent = sum.toString();
     }
     console.log(sum);
+    turnAllOperatorsToFalse();
 });
 var turnAllOperatorsToFalse = function () {
     willAdd = false;
@@ -78,18 +96,20 @@ var turnAllOperatorsToFalse = function () {
 var calculateSum = function () {
     if (willAdd) {
         sum += Number(inputedValue);
+        input.textContent = sum.toString();
+        console.log('added');
     }
     else if (willSubtract) {
         sum -= Number(inputedValue);
+        input.textContent = sum.toString();
     }
     else if (willMultiply) {
         sum *= Number(inputedValue);
+        input.textContent = sum.toString();
     }
     else if (willDivide) {
         sum /= Number(inputedValue);
-    }
-    else {
-        sum = Number(inputedValue);
+        input.textContent = sum.toString();
     }
     console.log(sum);
     inputedValue = '';

@@ -6,6 +6,7 @@ const result: HTMLElement = document.getElementById('result');
 let inputedValue: string = '';
 let sum: number = 0;
 
+let firstCalculation: boolean =  true;
 
 let willAdd: boolean = false;
 let willSubtract: boolean = false;
@@ -21,14 +22,10 @@ numberButtons.forEach(numberRow => {
                 inputedValue = '';
                 sum = 0;
                 input.textContent = '0';
+                firstCalculation = true;
                 turnAllOperatorsToFalse();
                 return;
             }
-
-            // if (willAdd || willSubtract || willMultiply || willDivide) {
-
-            //     return
-            // }
             inputedValue += number.textContent;
             input.textContent = inputedValue.toString();
         })
@@ -38,20 +35,38 @@ numberButtons.forEach(numberRow => {
 //add eventlisteners to operators
 operators.childNodes.forEach(operator => {
     operator.addEventListener('click', () => {
+        if(firstCalculation){
+            sum = Number(inputedValue);
+            inputedValue = '';
+            input.textContent = sum.toString();
+            firstCalculation = false;
+            console.log(sum, 'this was the first calc');
+            if (operator.textContent === '+') {
+                willAdd = true;
+            } else if (operator.textContent === '-') {
+                willSubtract = true;
+            } else if (operator.textContent === '×') {
+                willMultiply = true;
+            } else if (operator.textContent === '÷') {
+                willDivide = true;
+            }
         turnAllOperatorsToFalse();
+
+            return;
+        }
+
+        calculateSum();
+
         if (operator.textContent === '+') {
-            calculateSum()
             willAdd = true;
         } else if (operator.textContent === '-') {
-            calculateSum()
             willSubtract = true;
         } else if (operator.textContent === '×') {
-            calculateSum()
             willMultiply = true;
         } else if (operator.textContent === '÷') {
-            calculateSum()
             willDivide = true;
         }
+        turnAllOperatorsToFalse();
     })
 })
 
@@ -70,6 +85,8 @@ result.addEventListener('click', () => {
         input.textContent = sum.toString();
     }
     console.log(sum);
+    turnAllOperatorsToFalse();
+
 })
 
 const turnAllOperatorsToFalse = () => {
@@ -82,14 +99,19 @@ const turnAllOperatorsToFalse = () => {
 const calculateSum = () => {
     if(willAdd) {
         sum += Number(inputedValue);
+        input.textContent = sum.toString();
+        console.log('added')
     } else if(willSubtract){
         sum -= Number(inputedValue);
+        input.textContent = sum.toString();
+
     } else if(willMultiply){
         sum *= Number(inputedValue);
+        input.textContent = sum.toString();
+
     } else if(willDivide){
         sum /= Number(inputedValue);
-    } else {
-        sum = Number(inputedValue);
+        input.textContent = sum.toString();
     }
     console.log(sum);
     inputedValue = '';
