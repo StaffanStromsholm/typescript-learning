@@ -1,19 +1,20 @@
 const numberButtons: NodeListOf<Element> = document.querySelectorAll('.numbers');
 const input: HTMLElement = document.getElementById('input');
 const result: HTMLElement = document.getElementById('result');
-const addBtn = document.getElementById('add');
-const subtractBtn = document.getElementById('subtract');
-const multiplyBtn = document.getElementById('multiply');
-const divideBtn = document.getElementById('divide');
+const addBtn: HTMLElement = document.getElementById('add');
+const subtractBtn: HTMLElement = document.getElementById('subtract');
+const multiplyBtn: HTMLElement = document.getElementById('multiply');
+const divideBtn: HTMLElement = document.getElementById('divide');
 
-const operatorButtons = [addBtn, subtractBtn, multiplyBtn, divideBtn];
+const operatorButtons: HTMLElement[] = [addBtn, subtractBtn, multiplyBtn, divideBtn];
 
 let inputedValue: string = '';
 
 //add eventlisteners to the numbers and join them together when clicked
-numberButtons.forEach(numberRow => {
-    numberRow.childNodes.forEach(number => {
+numberButtons.forEach((numberRow: HTMLElement) => {
+    numberRow.childNodes.forEach((number: HTMLElement):void => {
        number.addEventListener('click', () => {
+           //if C is clicked, reset
         if (number.textContent === 'C') {
             inputedValue = '';
             input.textContent = '0';
@@ -25,15 +26,16 @@ numberButtons.forEach(numberRow => {
     })
 })
 
-//add eventlisteners to operators
-operatorButtons.forEach(operator =>{
+//add eventlisteners to operators and append them to inputedValue
+operatorButtons.forEach((operator:HTMLElement):void =>{
     operator.addEventListener('click', ()=>{
         inputedValue += operator.textContent;
         input.textContent = inputedValue;
     })
 })
 
-result.addEventListener('click', ()=>{
+//when div id="result" is clicked, use eval() to evaluate inputted string, replace characters × and ÷ with * and /
+result.addEventListener('click', ():void=>{
     inputedValue = eval(inputedValue.replace('×', '*').replace('÷', '/'))
-    input.textContent = inputedValue;
+    input.textContent = inputedValue.toUpperCase();
 })

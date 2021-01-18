@@ -3,31 +3,42 @@ const operators: HTMLElement = document.querySelector('.operators');
 const input: HTMLElement = document.getElementById('input');
 const result: HTMLElement = document.getElementById('result');
 
-let inputedValue: string = '';
+let inputedValue: string = '0';
 let sum: number = 0;
+let firstValue: string;
+let lastClickWasAnOperator: boolean = false;
+let clickedOperator: string;
 
-let firstCalculation: boolean =  true;
+// let willAdd: boolean = false;
+// let willSubtract: boolean = false;
+// let willMultiply: boolean = false;
+// let willDivide: boolean = false;
 
-let willAdd: boolean = false;
-let willSubtract: boolean = false;
-let willMultiply: boolean = false;
-let willDivide: boolean = false;
+input.textContent = inputedValue;
 
 //add eventlisteners to the numbers and join them together when clicked
 numberButtons.forEach(numberRow => {
     numberRow.childNodes.forEach(number => {
         number.addEventListener('click', () => {
+
             //if C is clicked, reset
             if (number.textContent === 'C') {
                 inputedValue = '';
                 sum = 0;
+                firstValue = '';
                 input.textContent = '0';
-                firstCalculation = true;
-                turnAllOperatorsToFalse();
+                lastClickWasAnOperator = false;
                 return;
             }
-            inputedValue += number.textContent;
-            input.textContent = inputedValue.toString();
+
+            if (inputedValue === '0' || lastClickWasAnOperator) {
+                inputedValue = number.textContent.toString();
+                input.textContent = inputedValue;
+                lastClickWasAnOperator = false;
+            } else {
+                inputedValue += number.textContent;
+                input.textContent = inputedValue;
+            }
         })
     })
 })
@@ -35,84 +46,33 @@ numberButtons.forEach(numberRow => {
 //add eventlisteners to operators
 operators.childNodes.forEach(operator => {
     operator.addEventListener('click', () => {
-        if(firstCalculation){
-            sum = Number(inputedValue);
-            inputedValue = '';
-            input.textContent = sum.toString();
-            firstCalculation = false;
-            console.log(sum, 'this was the first calc');
-            if (operator.textContent === '+') {
-                willAdd = true;
-            } else if (operator.textContent === '-') {
-                willSubtract = true;
-            } else if (operator.textContent === '×') {
-                willMultiply = true;
-            } else if (operator.textContent === '÷') {
-                willDivide = true;
-            }
-        turnAllOperatorsToFalse();
-
-            return;
+        let calculatedValue: string;
+        if(firstValue && operator){
+            calculatedValue = calculate(firstValue, clickedOperator, inputedValue).toString();
+            input.textContent = calculatedValue;
         }
-
-        calculateSum();
-
-        if (operator.textContent === '+') {
-            willAdd = true;
-        } else if (operator.textContent === '-') {
-            willSubtract = true;
-        } else if (operator.textContent === '×') {
-            willMultiply = true;
-        } else if (operator.textContent === '÷') {
-            willDivide = true;
-        }
-        turnAllOperatorsToFalse();
+        firstValue = calculatedValue; //this has a bug
+        lastClickWasAnOperator = true;
+        firstValue = inputedValue;
+        console.log(inputedValue);
+        clickedOperator = operator.textContent;
     })
 })
 
 result.addEventListener('click', () => {
-    if(willAdd){
-        sum += Number(inputedValue);
-        input.textContent = sum.toString();
-    } else if(willSubtract){
-        sum -= Number(inputedValue);
-        input.textContent = sum.toString();
-    } else if(willMultiply){
-        sum *= Number(inputedValue);
-        input.textContent = sum.toString();
-    } else if(willDivide) {
-        sum /= Number(inputedValue);
-        input.textContent = sum.toString();
-    }
-    console.log(sum);
-    turnAllOperatorsToFalse();
-
+    input.textContent = calculate(firstValue, clickedOperator, inputedValue).toString();
 })
 
-const turnAllOperatorsToFalse = () => {
-    willAdd = false;
-    willSubtract = false;
-    willMultiply = false;
-    willDivide = false;
-}
-
-const calculateSum = () => {
-    if(willAdd) {
-        sum += Number(inputedValue);
-        input.textContent = sum.toString();
-        console.log('added')
-    } else if(willSubtract){
-        sum -= Number(inputedValue);
-        input.textContent = sum.toString();
-
-    } else if(willMultiply){
-        sum *= Number(inputedValue);
-        input.textContent = sum.toString();
-
-    } else if(willDivide){
-        sum /= Number(inputedValue);
-        input.textContent = sum.toString();
+const calculate = (firstValue: string, operator: string, secondValue: string): number => {
+    let sum: number;
+    if (operator === '+') {
+        sum = parseFloat(firstValue) + parseFloat(secondValue);
+    } else if (operator === '-') {
+        sum = parseFloat(firstValue) - parseFloat(secondValue);
+    } else if (operator === '×') {
+        sum = parseFloat(firstValue) * parseFloat(secondValue);
+    } else if (operator === '÷') {
+        sum = parseFloat(firstValue) / parseFloat(secondValue);
     }
-    console.log(sum);
-    inputedValue = '';
+    return sum;
 }
