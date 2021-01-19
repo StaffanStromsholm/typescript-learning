@@ -29,8 +29,8 @@ operatorButtons.forEach(function (operator) {
         input.textContent = inputedValue;
     });
 });
-//when div id="result" is clicked, use eval() to evaluate inputted string, replace characters × and ÷ with * and /
+//when div id="result" is clicked, use eval() to evaluate inputed string, replace characters × and ÷ with * and /
 result.addEventListener('click', function () {
     inputedValue = eval(inputedValue.replace('×', '*').replace('÷', '/'));
-    input.textContent = inputedValue.toUpperCase();
+    input.textContent = inputedValue.toString().toUpperCase();
 });

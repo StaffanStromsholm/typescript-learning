@@ -9,17 +9,20 @@ let firstValue: string;
 let lastClickWasAnOperator: boolean = false;
 let clickedOperator: string;
 
-// let willAdd: boolean = false;
-// let willSubtract: boolean = false;
-// let willMultiply: boolean = false;
-// let willDivide: boolean = false;
-
 input.textContent = inputedValue;
 
 //add eventlisteners to the numbers and join them together when clicked
-numberButtons.forEach(numberRow => {
-    numberRow.childNodes.forEach(number => {
-        number.addEventListener('click', () => {
+numberButtons.forEach((numberRow: Element) => {
+    numberRow.childNodes.forEach((number: ChildNode) => {
+        number.addEventListener('click', ():void => {
+
+            //don't allow multiple decimal points
+            if(number.textContent === '.'){
+                let inputedValueArray: string[] = inputedValue.split('')
+                if(inputedValueArray.indexOf('.') > -1){
+                    return;
+                }
+            }
 
             //if C is clicked, reset
             if (number.textContent === 'C') {
@@ -31,11 +34,13 @@ numberButtons.forEach(numberRow => {
                 return;
             }
 
+            //when first number button is clicked, replace '0' with clicked
             if (inputedValue === '0' || lastClickWasAnOperator) {
                 inputedValue = number.textContent.toString();
                 input.textContent = inputedValue;
                 lastClickWasAnOperator = false;
-            } else {
+            } 
+            else {
                 inputedValue += number.textContent;
                 input.textContent = inputedValue;
             }
@@ -44,22 +49,22 @@ numberButtons.forEach(numberRow => {
 })
 
 //add eventlisteners to operators
-operators.childNodes.forEach(operator => {
+operators.childNodes.forEach((operator: ChildNode) => {
     operator.addEventListener('click', () => {
         let calculatedValue: string;
+
+        //if firstValue is not undefined, perform a calculation on firstValue and inputedValue and display the result
         if(firstValue && operator){
             calculatedValue = calculate(firstValue, clickedOperator, inputedValue).toString();
             input.textContent = calculatedValue;
         }
-        firstValue = calculatedValue; //this has a bug
         lastClickWasAnOperator = true;
-        firstValue = inputedValue;
-        console.log(inputedValue);
+        firstValue = calculatedValue || inputedValue; //if a calculation was performed, assign it to firstValue, else assign inputedValue
         clickedOperator = operator.textContent;
     })
 })
 
-result.addEventListener('click', () => {
+result.addEventListener('click', ():void => {
     input.textContent = calculate(firstValue, clickedOperator, inputedValue).toString();
 })
 

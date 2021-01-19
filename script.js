@@ -7,15 +7,18 @@ var sum = 0;
 var firstValue;
 var lastClickWasAnOperator = false;
 var clickedOperator;
-// let willAdd: boolean = false;
-// let willSubtract: boolean = false;
-// let willMultiply: boolean = false;
-// let willDivide: boolean = false;
 input.textContent = inputedValue;
 //add eventlisteners to the numbers and join them together when clicked
 numberButtons.forEach(function (numberRow) {
     numberRow.childNodes.forEach(function (number) {
         number.addEventListener('click', function () {
+            //don't allow multiple decimal points
+            if (number.textContent === '.') {
+                var inputedValueArray = inputedValue.split('');
+                if (inputedValueArray.indexOf('.') > -1) {
+                    return;
+                }
+            }
             //if C is clicked, reset
             if (number.textContent === 'C') {
                 inputedValue = '';
@@ -25,6 +28,7 @@ numberButtons.forEach(function (numberRow) {
                 lastClickWasAnOperator = false;
                 return;
             }
+            //when first number button is clicked, replace '0' with clicked
             if (inputedValue === '0' || lastClickWasAnOperator) {
                 inputedValue = number.textContent.toString();
                 input.textContent = inputedValue;
@@ -41,14 +45,13 @@ numberButtons.forEach(function (numberRow) {
 operators.childNodes.forEach(function (operator) {
     operator.addEventListener('click', function () {
         var calculatedValue;
+        //if firstValue is not undefined, perform a calculation on firstValue and inputedValue and display the result
         if (firstValue && operator) {
             calculatedValue = calculate(firstValue, clickedOperator, inputedValue).toString();
             input.textContent = calculatedValue;
         }
-        firstValue = calculatedValue; //this has a bug
         lastClickWasAnOperator = true;
-        firstValue = inputedValue;
-        console.log(inputedValue);
+        firstValue = calculatedValue || inputedValue; //if a calculation was performed, assign it to firstValue, else assign inputedValue
         clickedOperator = operator.textContent;
     });
 });
